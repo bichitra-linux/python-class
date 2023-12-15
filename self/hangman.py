@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from collections import Counter
 
 # Define the Hangman game class
 class HangmanGame:
@@ -7,6 +8,7 @@ class HangmanGame:
         self.word = word
         self.guesses = []
         self.remaining_attempts = 6
+        self.letter_frequency = Counter(word)
 
     def guess_letter(self, letter):
         self.guesses.append(letter)
@@ -19,6 +21,12 @@ class HangmanGame:
     def is_word_guessed(self):
         return all(letter in self.guesses for letter in self.word)
 
+    def get_hint(self):
+        for letter, _ in self.letter_frequency.most_common():
+            if letter not in self.guesses:
+                return letter
+        return None
+
 # Create the GUI window
 window = tk.Tk()
 window.title("Hangman Game")
@@ -29,6 +37,9 @@ hangman_game = HangmanGame("python")
 # Create the GUI elements
 word_label = tk.Label(window, text="_ " * len(hangman_game.word))
 word_label.pack()
+
+hint_button = tk.Button(window, text="Hint", command=lambda: messagebox.showinfo("Hint", f"Try guessing: {hangman_game.get_hint()}"))
+hint_button.pack()
 
 input_entry = tk.Entry(window)
 input_entry.pack()
