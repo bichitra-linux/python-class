@@ -38,6 +38,9 @@ hangman_game = HangmanGame("python")
 word_label = tk.Label(window, text="_ " * len(hangman_game.word))
 word_label.pack()
 
+attempts_label = tk.Label(window, text=f"Remaining attempts: {hangman_game.remaining_attempts}")  # New label for remaining attempts
+attempts_label.pack()
+
 hint_button = tk.Button(window, text="Hint", command=lambda: messagebox.showinfo("Hint", f"Try guessing: {hangman_game.get_hint()}"))
 hint_button.pack()
 
@@ -48,6 +51,7 @@ def guess_letter():
     letter = input_entry.get()
     hangman_game.guess_letter(letter)
     word_label.config(text=" ".join(letter if letter in hangman_game.guesses else "_ " for letter in hangman_game.word))
+    attempts_label.config(text=f"Remaining attempts: {hangman_game.remaining_attempts}")  # Update the remaining attempts label
     input_entry.delete(0, tk.END)
 
     if hangman_game.is_game_over():
