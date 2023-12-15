@@ -22,6 +22,7 @@ pipe_gap = 200
 pipe_list = []
 SPAWNPIPE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPIPE, 1200)  # New timer event to spawn a new pipe every 1.2 seconds
+score = 0  # New variable for the score
 
 # Game loop
 running = True
@@ -44,12 +45,29 @@ while running:
     bird_rect.y += bird_movement
     pipe_list = [pipe.move(-5, 0) for pipe in pipe_list]  # Move the pipes to the left
 
+    # Collision detection
+    for pipe in pipe_list:
+        if bird_rect.colliderect(pipe):
+            running = False
+    if bird_rect.colliderect(ground_rect):
+        running = False
+
+    # Scoring
+    if len(pipe_list) > 0 and bird_rect.right > pipe_list[0].right and bird_rect.left < pipe_list[0].right + 5:
+        score += 1
+        pipe_list.pop(0)
+        pipe_list.pop(0)
+
     # Render game objects
     window.fill((255, 255, 255))
     pygame.draw.rect(window, (255, 0, 0), bird_rect)
     pygame.draw.rect(window, (0, 255, 0), ground_rect)
     for pipe in pipe_list:  # Draw all the pipes
         pygame.draw.rect(window, (0, 255, 0), pipe)
+
+    # Draw the score
+    score_surface = pygame.font.Font(None, 36).render(str(score), True, (0, 0, 0))
+    window.blit(score_surface, (window_width / 2, 100))
 
     # Update display
     pygame.display.update()
