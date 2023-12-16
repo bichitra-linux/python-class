@@ -38,8 +38,11 @@ hangman_game = HangmanGame("python")
 word_label = tk.Label(window, text="_ " * len(hangman_game.word))
 word_label.pack()
 
-attempts_label = tk.Label(window, text=f"Remaining attempts: {hangman_game.remaining_attempts}")  # New label for remaining attempts
+attempts_label = tk.Label(window, text=f"Remaining attempts: {hangman_game.remaining_attempts}")
 attempts_label.pack()
+
+guessed_label = tk.Label(window, text="Guessed letters: ")  # New label for guessed letters
+guessed_label.pack()
 
 hint_button = tk.Button(window, text="Hint", command=lambda: messagebox.showinfo("Hint", f"Try guessing: {hangman_game.get_hint()}"))
 hint_button.pack()
@@ -51,14 +54,28 @@ def guess_letter():
     letter = input_entry.get()
     hangman_game.guess_letter(letter)
     word_label.config(text=" ".join(letter if letter in hangman_game.guesses else "_ " for letter in hangman_game.word))
-    attempts_label.config(text=f"Remaining attempts: {hangman_game.remaining_attempts}")  # Update the remaining attempts label
+    attempts_label.config(text=f"Remaining attempts: {hangman_game.remaining_attempts}")
+    guessed_label.config(text=f"Guessed letters: {', '.join(hangman_game.guesses)}")  # Update the guessed letters label
     input_entry.delete(0, tk.END)
 
     if hangman_game.is_game_over():
-        messagebox.showinfo("Game Over", "You lost!")
+        if hangman_game.is_word_guessed():
+            messagebox.showinfo("Game Over", "Congratulations, you won!")  # New win message
+        else:
+            messagebox.showinfo("Game Over", "You lost!")
 
 guess_button = tk.Button(window, text="Guess", command=guess_letter)
 guess_button.pack()
+
+def restart_game():  # New function to restart the game
+    hangman_game.__init__("python")
+    word_label.config(text="_ " * len(hangman_game.word))
+    attempts_label.config(text=f"Remaining attempts: {hangman_game.remaining_attempts}")
+    guessed_label.config(text="Guessed letters: ")
+    input_entry.delete(0, tk.END)
+
+restart_button = tk.Button(window, text="Restart", command=restart_game)  # New restart button
+restart_button.pack()
 
 # Start the GUI event loop
 window.mainloop()
