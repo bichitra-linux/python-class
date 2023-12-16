@@ -94,7 +94,7 @@ window.bind('<Return>', guess_letter)
 
 def restart_game():  # New function to restart the game
     hangman_game.__init__(["python", "java", "javascript"], difficulty="medium")  # New list of words
-    word_label.config(text="_ " * len(hangman_game.word))
+    word_label.config(text="_ " * len(hangman_game.current_word))
     attempts_label.config(text=f"Remaining attempts: {hangman_game.remaining_attempts}")
     guessed_label.config(text="Guessed letters: ")
     input_entry.delete(0, tk.END)
