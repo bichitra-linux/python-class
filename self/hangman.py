@@ -4,10 +4,11 @@ from collections import Counter
 
 # Define the Hangman game class
 class HangmanGame:
-    def __init__(self, word):
+    def __init__(self, word, difficulty="medium"):
         self.word = word
         self.guesses = []
-        self.remaining_attempts = 6
+        self.difficulty = difficulty
+        self.remaining_attempts = {"easy": 9, "medium": 6, "hard": 3}[difficulty]
         self.letter_frequency = Counter(word)
 
     def guess_letter(self, letter):
@@ -22,10 +23,14 @@ class HangmanGame:
         return all(letter in self.guesses for letter in self.word)
 
     def get_hint(self):
-        for letter, _ in self.letter_frequency.most_common():
-            if letter not in self.guesses:
-                return letter
-        return None
+        known_word = [letter if letter in self.guesses else None for letter in self.word]
+        possible_words = [word for word in self.word_list if len(word) == len(known_word)]
+        for i, letter in enumerate(known_word):
+            if letter is not None:
+                possible_words = [word for word in possible_words if word[i] == letter]
+        remaining_letters = [letter for word in possible_words for letter in word if letter not in self.guesses]
+        return Counter(remaining_letters).most_common(1)[0][0] if remaining_letters else None
+
 
 # Create the GUI window
 window = tk.Tk()
@@ -50,7 +55,7 @@ hint_button.pack()
 input_entry = tk.Entry(window)
 input_entry.pack()
 
-def guess_letter():
+def guess_letter(event=None):
     letter = input_entry.get()
     hangman_game.guess_letter(letter)
     word_label.config(text=" ".join(letter if letter in hangman_game.guesses else "_ " for letter in hangman_game.word))
@@ -67,8 +72,11 @@ def guess_letter():
 guess_button = tk.Button(window, text="Guess", command=guess_letter)
 guess_button.pack()
 
+# Bind the enter key to the guess_letter function
+window.bind('<Return>', guess_letter)
+
 def restart_game():  # New function to restart the game
-    hangman_game.__init__("python")
+    hangman_game.__init__("python", difficulty="medium")
     word_label.config(text="_ " * len(hangman_game.word))
     attempts_label.config(text=f"Remaining attempts: {hangman_game.remaining_attempts}")
     guessed_label.config(text="Guessed letters: ")
