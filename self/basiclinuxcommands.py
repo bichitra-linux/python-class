@@ -13,7 +13,7 @@ commands = [
 # Run each command and take a screenshot
 for command in commands:
     # Open a new MATE Terminal window and run the command
-    bash_command = f'bash -c "sleep 1; xdotool type \\"{command}\\"; xdotool key Return; exec bash"'
+    bash_command = f'bash -c "sleep 2; xdotool type \\"{command}\\"; xdotool key Return; exec bash"'
 
     subprocess.Popen(['mate-terminal', '-e', bash_command])   
     # Wait for the command to finish and the output to appear
