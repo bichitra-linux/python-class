@@ -1,5 +1,6 @@
 import subprocess
-import pyautogui
+import time
+import os
 
 # List of commands to run
 commands = [
@@ -11,14 +12,20 @@ commands = [
 
 # Run each command and take a screenshot
 for command in commands:
-    # Run the command and capture the output
-    output = subprocess.check_output(command, shell=True, universal_newlines=True)
+    # Open a new MATE Terminal window and run the command
+    subprocess.Popen(['mate-terminal', '--', 'bash', '-ic', f"{command}; sleep 2"])
     
-    # Get the terminal window
-    terminal_windows = pyautogui.getWindowsWithTitle("MATE Terminal")
-    if terminal_windows:
-        terminal_window = terminal_windows[0]
-        
-        # Take a screenshot of the terminal window
-        screenshot = pyautogui.screenshot(region=(terminal_window.left, terminal_window.top, terminal_window.width, terminal_window.height))
-        screenshot.save(f"{command}.png")
+    # Wait for the command to finish and the output to appear
+    time.sleep(6)
+    
+    # Get the window ID of the MATE Terminal
+    window_id = subprocess.check_output(['xdotool', 'search', '--name', 'Terminal']).split()[0]
+    
+    # Take a screenshot of the MATE Terminal
+    os.system(f"import -window {window_id} {command}.png")
+    
+    # Close the terminal window
+    subprocess.run(['xdotool', 'windowclose', window_id])
+    
+    # Wait for a second before running the next command
+    time.sleep(1)
