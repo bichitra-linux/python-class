@@ -17,7 +17,7 @@ for command in commands:
 
     subprocess.Popen(['mate-terminal', '-e', bash_command])   
     # Wait for the command to finish and the output to appear
-    time.sleep(6)
+    time.sleep(4)
     
     # Get the window ID of the MATE Terminal
     window_id = subprocess.check_output(['xdotool', 'search', '--name', 'Terminal']).split()[0]
