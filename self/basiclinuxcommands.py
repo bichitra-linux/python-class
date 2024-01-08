@@ -29,4 +29,4 @@ for command in commands:
     subprocess.run(['xdotool', 'windowclose', window_id])
     
     # Wait for a second before running the next command
-    time.sleep(3)
+    time.sleep(6)
