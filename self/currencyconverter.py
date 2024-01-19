@@ -1,5 +1,6 @@
 import requests
-from tkinter import Tk, Label, Entry, Button, messagebox
+from tkinter import Tk, Label, Entry, Button, messagebox, OptionMenu, StringVar
+import requests
 import matplotlib.pyplot as plt
 
 # Function to fetch the latest exchange rate
@@ -12,8 +13,8 @@ def get_exchange_rate(base_currency, target_currency):
 
 # Function to convert the amount
 def convert_currency():
-    base_currency = base_entry.get()
-    target_currency = target_entry.get()
+    base_currency = base_var.get()
+    target_currency = target_var.get()
     amount = float(amount_entry.get())
 
     if base_currency == "" or target_currency == "" or amount == "":
@@ -45,14 +46,28 @@ root.configure(bg="white")
 base_label = Label(root, text="Base Currency:", bg="white")
 base_label.pack()
 
-base_entry = Entry(root)
-base_entry.pack()
+# List of currency options
+# Fetch the list of currency codes
+response = requests.get("https://api.exchangerate-api.com/v4/latest/USD")
+data = response.json()
+currency_options = list(data['rates'].keys())
+
+# Variable to store the selected base currency
+base_var = StringVar()  # Fixed the error by importing StringVar separately
+base_var.set(currency_options[0])  # Set the default value
+
+base_option_menu = OptionMenu(root, base_var, *currency_options)
+base_option_menu.pack()
 
 target_label = Label(root, text="Target Currency:", bg="white")
 target_label.pack()
 
-target_entry = Entry(root)
-target_entry.pack()
+# Variable to store the selected target currency
+target_var = StringVar()  # Fixed the error by importing StringVar separately
+target_var.set(currency_options[1])  # Set the default value
+
+target_option_menu = OptionMenu(root, target_var, *currency_options)
+target_option_menu.pack()
 
 amount_label = Label(root, text="Amount:", bg="white")
 amount_label.pack()
